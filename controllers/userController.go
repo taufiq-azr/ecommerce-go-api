@@ -2,20 +2,22 @@ package controllers
 
 import (
 	"context"
-	"github.com/taufiq-azr/ecommerce-go-api/models"
 	"net/http"
 	"time"
+	"github.com/taufiq-azr/ecommerce-go-api/models"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+
 )
 
-var userCollection *mongo.Collection // Deklarasi koleksi
+var UserCollection *mongo.Collection
 
-func SetupUserController(collection *mongo.Collection) {
-	userCollection = collection
+// Fungsi untuk mengatur koleksi User
+func SetupUserController(Collection *mongo.Collection) {
+	UserCollection = Collection
 }
 
 // CreateUser menambahkan pengguna baru
@@ -25,14 +27,17 @@ func CreateUser(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"status":  "fail",
 			"message": "failed to parse request body",
-			"error":   err.Error()})
+			"error":   err.Error(),
+		})
 	}
 
+	// Set user details
 	user.ID = primitive.NewObjectID()
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = time.Now()
 
-	_, err := userCollection.InsertOne(context.TODO(), user)
+	// Insert into MongoDB
+	_, err := UserCollection.InsertOne(context.TODO(), user)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"status":  "failed",
@@ -47,7 +52,7 @@ func CreateUser(c *fiber.Ctx) error {
 // GetUsers mendapatkan semua pengguna
 func GetUsers(c *fiber.Ctx) error {
 	var users []models.User
-	cursor, err := userCollection.Find(context.TODO(), bson.M{})
+	cursor, err := UserCollection.Find(context.TODO(), bson.M{})
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"status":  "failed",
@@ -82,7 +87,7 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	user.UpdatedAt = time.Now()
 
-	_, err := userCollection.UpdateOne(context.TODO(), bson.M{"_id": id}, bson.M{"$set": user})
+	_, err := UserCollection.UpdateOne(context.TODO(), bson.M{"_id": id}, bson.M{"$set": user})
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"status":  "failed",
@@ -98,7 +103,7 @@ func UpdateUser(c *fiber.Ctx) error {
 func DeleteUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	_, err := userCollection.DeleteOne(context.TODO(), bson.M{"_id": id})
+	_, err := UserCollection.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"status":  "failed",

@@ -2,18 +2,25 @@ package config
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"fmt"
 	"log"
 	"time"
-	"fmt"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/taufiq-azr/ecommerce-go-api/controllers"
 )
 
-var DB *mongo.Database
+type Collections struct {
+	UserCollection     *mongo.Collection
+	ProductCollection  *mongo.Collection
+	CategoryCollection *mongo.Collection
+	// Tambahkan koleksi lainnya sesuai kebutuhan
+}
+
+var DB Collections
 
 func ConnectDB() {
-	
-	clientOption := options.Client().ApplyURI("")
+	clientOption := options.Client().ApplyURI("mongodb://localhost:27017/go-ecommerce")
 
 	// Membuat koneksi ke MongoDB
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -29,7 +36,15 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
-	fmt.Println("Connected to MongoDB!")
 
+	// Set global database and collections
+	DB.UserCollection = client.Database("go-ecommerce").Collection("users")
+	DB.ProductCollection = client.Database("go-ecommerce").Collection("products")
+	DB.CategoryCollection = client.Database("go-ecommerce").Collection("categories")
+
+	controllers.SetupUserController(DB.UserCollection)
+	controllers.SetupProductController(DB.ProductCollection)
+	controllers.SetupCategoryController(DB.CategoryCollection)
+
+	fmt.Println("Connected to MongoDB!")
 }
