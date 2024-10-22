@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"context"
-	"e-commerce-api/models"
+	"github.com/taufiq-azr/ecommerce-go-api/models"
 	"net/http"
 	"time"
 

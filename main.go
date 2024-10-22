@@ -1,8 +1,8 @@
 package main
 
 import (
-	"ecommerce-api/config"
-	"ecommerce-api/routes"
+	"github.com/taufiq-azr/ecommerce-go-api/config"
+	"github.com/taufiq-azr/ecommerce-go-api/routes"
 	"log"
 
 	"github.com/gofiber/fiber/v2"

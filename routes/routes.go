@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"e-commerce-api/controllers"
-	"e-commerce-api/middleware" // Pastikan import middleware
+	"github.com/taufiq-azr/ecommerce-go-api/controllers"
+	"github.com/taufiq-azr/ecommerce-go-api/middlewares"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -17,7 +17,7 @@ func SetupRoutes(app *fiber.App) {
 
 	// Route untuk produk
 	api.Post("/products", middleware.AuthMiddleware, controllers.CreateProduct)       // Menambahkan produk
-	api.Get("/products", controllers.GetProducts)                                     // Mendapatkan semua produk
+	api.Get("/products", controllers.GetProduct)                                     // Mendapatkan semua produk
 	api.Get("/products/:id", controllers.GetProduct)                                  // Mendapatkan produk berdasarkan ID
 	api.Put("/products/:id", middleware.AuthMiddleware, controllers.UpdateProduct)    // Memperbarui produk
 	api.Delete("/products/:id", middleware.AuthMiddleware, controllers.DeleteProduct) // Menghapus produk
@@ -29,7 +29,6 @@ func SetupRoutes(app *fiber.App) {
 	// Route untuk user
 	api.Post("/users", controllers.CreateUser)                                  // Menambahkan user
 	api.Get("/users", controllers.GetUsers)                                     // Mendapatkan semua user
-	api.Get("/users/:id", controllers.GetUser)                                  // Mendapatkan user berdasarkan ID
 	api.Put("/users/:id", middleware.AuthMiddleware, controllers.UpdateUser)    // Memperbarui user
 	api.Delete("/users/:id", middleware.AuthMiddleware, controllers.DeleteUser) // Menghapus user
 }
